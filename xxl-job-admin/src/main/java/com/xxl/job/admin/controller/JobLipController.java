@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by tabtabansi on 2023年5月19日.
+ * Created by lip team on 2023-05-19.
  */
 @Controller
 @RequestMapping("/lip")
@@ -43,26 +43,27 @@ public class JobLipController {
         if (!"POST".equalsIgnoreCase(request.getMethod())) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "invalid request, HttpMethod not support.");
         }
-        if (uri == null || uri.trim().length() == 0) {
+        if (uri == null || uri.isEmpty()) {
             return new ReturnT<>(ReturnT.FAIL_CODE, "invalid request, uri-mapping empty.");
         }
-        if (XxlJobAdminConfig.getAdminConfig().getAccessToken() != null
-                && XxlJobAdminConfig.getAdminConfig().getAccessToken().trim().length() > 0
-                && !XxlJobAdminConfig.getAdminConfig().getAccessToken().equals(request.getHeader(XxlJobRemotingUtil.XXL_JOB_ACCESS_TOKEN))) {
-            return new ReturnT<>(ReturnT.FAIL_CODE, "The access token is wrong.");
+        XxlJobAdminConfig adminConfig = XxlJobAdminConfig.getAdminConfig();
+        if (adminConfig.getAccessToken() != null && !adminConfig.getAccessToken().isEmpty()) {
+            String token = request.getHeader(XxlJobRemotingUtil.XXL_JOB_ACCESS_TOKEN);
+            if (!adminConfig.getAccessToken().equals(token)) {
+                return new ReturnT<>(ReturnT.FAIL_CODE, "The access token is wrong.");
+            }
         }
 
         // services mapping
         switch (uri) {
             case "findGroupList": {
-                Map<String, String> keyValueMap = new Gson().fromJson(data, new TypeToken<Map<String, String>>() {
+                Map<String, String> params = new Gson().fromJson(data, new TypeToken<Map<String, String>>() {
                 }.getType());
-                if (keyValueMap.size() != 1) {
-                    return new ReturnT<>(ReturnT.FAIL_CODE, "parameter error");
+                String appname = params.get("appname");
+                if (appname == null || appname.trim().isEmpty()) {
+                    return new ReturnT<>(ReturnT.FAIL_CODE, "parameter 【appname】 error");
                 }
-                List<XxlJobGroup> list = xxlJobGroupDao.findList(
-                        keyValueMap.get("appname"), null
-                );
+                List<XxlJobGroup> list = xxlJobGroupDao.findList(appname.trim(), null);
                 Gson gson = new Gson();
                 String json = gson.toJson(list);
                 return new ReturnT<>(json);
@@ -79,48 +80,60 @@ public class JobLipController {
             }
 
             case "remove": {
-                Map<String, String> keyValueMap = new Gson().fromJson(data, new TypeToken<Map<String, String>>() {
+                Map<String, String> params = new Gson().fromJson(data, new TypeToken<Map<String, String>>() {
                 }.getType());
-                if (keyValueMap.size() != 1) {
-                    return new ReturnT<>(ReturnT.FAIL_CODE, "parameter error");
+                int id = parseInt(params.get("id"));
+                if (id <= 0) {
+                    return new ReturnT<>(ReturnT.FAIL_CODE, "parameter 【id】 error");
                 }
-                return xxlJobService.remove(Integer.parseInt(keyValueMap.get("id")));
+                return xxlJobService.remove(id);
             }
 
             case "stop": {
-                Map<String, String> keyValueMap = new Gson().fromJson(data, new TypeToken<Map<String, String>>() {
+                Map<String, String> params = new Gson().fromJson(data, new TypeToken<Map<String, String>>() {
                 }.getType());
-                if (keyValueMap.size() != 1) {
-                    return new ReturnT<>(ReturnT.FAIL_CODE, "parameter error");
+                int id = parseInt(params.get("id"));
+                if (id <= 0) {
+                    return new ReturnT<>(ReturnT.FAIL_CODE, "parameter 【id】 error");
                 }
-                return xxlJobService.stop(Integer.parseInt(keyValueMap.get("id")));
+                return xxlJobService.stop(id);
             }
 
             case "start": {
-                Map<String, String> keyValueMap = new Gson().fromJson(data, new TypeToken<Map<String, String>>() {
+                Map<String, String> params = new Gson().fromJson(data, new TypeToken<Map<String, String>>() {
                 }.getType());
-                if (keyValueMap.size() != 1) {
-                    return new ReturnT<>(ReturnT.FAIL_CODE, "parameter error");
+                int id = parseInt(params.get("id"));
+                if (id <= 0) {
+                    return new ReturnT<>(ReturnT.FAIL_CODE, "parameter 【id】 error");
                 }
-                return xxlJobService.start(Integer.parseInt(keyValueMap.get("id")));
+                return xxlJobService.start(id);
             }
 
             case "findInfoList": {
-                Map<String, String> keyValueMap = new Gson().fromJson(data, new TypeToken<Map<String, String>>() {
+                Map<String, String> params = new Gson().fromJson(data, new TypeToken<Map<String, String>>() {
                 }.getType());
-                if (keyValueMap.size() != 5) {
-                    return new ReturnT<>(ReturnT.FAIL_CODE, "parameter error");
+                int jobGroup = parseInt(params.get("jobGroup"));
+                if (jobGroup <= 0) {
+                    return new ReturnT<>(ReturnT.FAIL_CODE, "parameter 【jobGroup】 error");
                 }
                 String list = xxlJobService.findList(
-                        Integer.parseInt(keyValueMap.get("jobGroup")),
-                        Integer.parseInt(keyValueMap.get("triggerStatus")),
-                        keyValueMap.get("jobDesc"),
-                        keyValueMap.get("executorHandler"),
-                        keyValueMap.get("author"));
+                        jobGroup,
+                        parseInt(params.get("triggerStatus")),
+                        params.get("jobDesc"),
+                        params.get("executorHandler"),
+                        params.get("author"));
                 return new ReturnT<>(list);
             }
             default:
                 return new ReturnT<>(ReturnT.FAIL_CODE, "invalid request, uri-mapping(" + uri + ") not found.");
+        }
+    }
+
+    private int parseInt(String str) {
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            return 0;
         }
     }
 
