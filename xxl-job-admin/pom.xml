@@ -23,6 +23,16 @@
 				<artifactId>snakeyaml</artifactId>
 				<version>${snakeyaml.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
