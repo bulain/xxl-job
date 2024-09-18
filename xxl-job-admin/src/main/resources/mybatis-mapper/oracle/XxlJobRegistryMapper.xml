@@ -22,7 +22,7 @@
     <select id="findDead" parameterType="java.util.HashMap" resultType="java.lang.Integer">
         SELECT t.ID
         FROM XXL_JOB_REGISTRY t
-        WHERE t.UPDATE_TIME  <![CDATA[ < ]]>  #{deadTime,jdbcType=DATE}
+        WHERE t.UPDATE_TIME  <![CDATA[ < ]]>  (#{nowTime} - INTERVAL '${timeout}' SECOND)
     </select>
 
     <delete id="removeDead" parameterType="java.lang.Integer">
@@ -37,7 +37,7 @@
         SELECT
         <include refid="Base_Column_List"/>
         FROM XXL_JOB_REGISTRY t
-        WHERE t.UPDATE_TIME  <![CDATA[ > ]]>  #{deadTime,jdbcType=DATE}
+        WHERE t.UPDATE_TIME  <![CDATA[ > ]]>  (#{nowTime} - INTERVAL '${timeout}' SECOND)
     </select>
 
     <update id="registryUpdate">

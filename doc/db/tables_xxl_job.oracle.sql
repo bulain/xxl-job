@@ -295,7 +295,7 @@ VALUES (1, 1, '测试任务1',
         '');
 
 INSERT INTO XXL_JOB_USER(ID, USERNAME, PASSWORD, ROLE, PERMISSION)
-VALUES (1, 'admin', '$2a$10$rElzP.wCmjyjsVIIqoP4fe8u1qH3otIxiG4UhYs9A3Ivsrm1LrpOu', 1, NULL);
+VALUES (1, 'admin', 'e10adc3949ba59abbe56e057f20f883e', 1, NULL);
 
 INSERT INTO XXL_JOB_LOCK (LOCK_NAME)
 VALUES ('schedule_lock');

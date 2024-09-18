@@ -25,7 +25,7 @@
         SELECT
         <include refid="Base_Column_List"/>
         FROM XXL_JOB_GROUP t
-        ORDER BY t.APP_NAME, t.TITLE, t.ID" ASC
+        ORDER BY t.APP_NAME, t.TITLE, t.ID ASC
     </select>
 
     <select id="findByAddressType" parameterType="java.lang.Integer" resultMap="XxlJobGroup">
