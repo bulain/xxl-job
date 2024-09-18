@@ -7,7 +7,7 @@ import com.xxl.job.admin.core.util.JacksonUtil;
 import com.xxl.job.admin.dao.XxlJobUserDao;
 import com.xxl.job.core.biz.model.ReturnT;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.DigestUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +24,8 @@ public class LoginService {
 
     @Resource
     private XxlJobUserDao xxlJobUserDao;
-
+    @Resource
+    private PasswordEncoder passwordEncoder;
 
     private String makeToken(XxlJobUser xxlJobUser){
         String tokenJson = JacksonUtil.writeValueAsString(xxlJobUser);
@@ -53,8 +54,8 @@ public class LoginService {
         if (xxlJobUser == null) {
             return new ReturnT<String>(500, I18nUtil.getString("login_param_unvalid"));
         }
-        String passwordMd5 = DigestUtils.md5DigestAsHex(password.getBytes());
-        if (!passwordMd5.equals(xxlJobUser.getPassword())) {
+        boolean matches = passwordEncoder.matches(password, xxlJobUser.getPassword());
+        if (!matches) {
             return new ReturnT<String>(500, I18nUtil.getString("login_param_unvalid"));
         }
 

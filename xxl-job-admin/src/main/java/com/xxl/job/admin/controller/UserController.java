@@ -8,9 +8,9 @@ import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobUserDao;
 import com.xxl.job.admin.service.LoginService;
 import com.xxl.job.core.biz.model.ReturnT;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +33,8 @@ public class UserController {
     private XxlJobUserDao xxlJobUserDao;
     @Resource
     private XxlJobGroupDao xxlJobGroupDao;
+    @Resource
+    private PasswordEncoder passwordEncoder;
 
     @RequestMapping
     @PermissionLimit(adminuser = true)
@@ -93,7 +95,7 @@ public class UserController {
             return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
         // md5 password
-        xxlJobUser.setPassword(DigestUtils.md5DigestAsHex(xxlJobUser.getPassword().getBytes()));
+        xxlJobUser.setPassword(passwordEncoder.encode(xxlJobUser.getPassword()));
 
         // check repeat
         XxlJobUser existUser = xxlJobUserDao.loadByUserName(xxlJobUser.getUsername());
@@ -124,7 +126,7 @@ public class UserController {
                 return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_lengh_limit")+"[4-20]" );
             }
             // md5 password
-            xxlJobUser.setPassword(DigestUtils.md5DigestAsHex(xxlJobUser.getPassword().getBytes()));
+            xxlJobUser.setPassword(passwordEncoder.encode(xxlJobUser.getPassword()));
         } else {
             xxlJobUser.setPassword(null);
         }
@@ -163,7 +165,7 @@ public class UserController {
         }
 
         // md5 password
-        String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
+        String md5Password = passwordEncoder.encode(password);
 
         // update pwd
         XxlJobUser loginUser = (XxlJobUser) request.getAttribute(LoginService.LOGIN_IDENTITY_KEY);
