@@ -97,7 +97,7 @@
         FROM xxl_job_group AS t
         <where>
             <if test="appname != null and appname != ''">
-                AND t.app_name like CONCAT(CONCAT('%', #{appname}), '%')
+                AND t.app_name = #{appname}
             </if>
             <if test="title != null and title != ''">
                 AND t.title like CONCAT(CONCAT('%', #{title}), '%')
