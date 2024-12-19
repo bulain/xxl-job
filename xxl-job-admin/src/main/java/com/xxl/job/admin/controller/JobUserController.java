@@ -173,7 +173,7 @@ public class JobUserController {
         // valid old pwd
         XxlJobUser loginUser = PermissionInterceptor.getLoginUser(request);
         XxlJobUser existUser = xxlJobUserDao.loadByUserName(loginUser.getUsername());
-        if (passwordEncoder.matches(password, existUser.getPassword())) {
+        if (passwordEncoder.matches(oldPassword, existUser.getPassword())) {
             return new ReturnT<String>(ReturnT.FAIL.getCode(), I18nUtil.getString("change_pwd_field_oldpwd") + I18nUtil.getString("system_unvalid"));
         }
 
