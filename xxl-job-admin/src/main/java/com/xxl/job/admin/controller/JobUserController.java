@@ -167,17 +167,16 @@ public class JobUserController {
             return new ReturnT<String>(ReturnT.FAIL_CODE, I18nUtil.getString("system_lengh_limit")+"[4-20]" );
         }
 
-        // md5 password
-        String md5Password = passwordEncoder.encode(password);
-
         // valid old pwd
         XxlJobUser loginUser = PermissionInterceptor.getLoginUser(request);
         XxlJobUser existUser = xxlJobUserDao.loadByUserName(loginUser.getUsername());
-        if (passwordEncoder.matches(oldPassword, existUser.getPassword())) {
+        boolean matches = passwordEncoder.matches(oldPassword, existUser.getPassword());
+        if (!matches) {
             return new ReturnT<String>(ReturnT.FAIL.getCode(), I18nUtil.getString("change_pwd_field_oldpwd") + I18nUtil.getString("system_unvalid"));
         }
 
         // write new
+        String md5Password = passwordEncoder.encode(password);
         existUser.setPassword(md5Password);
         xxlJobUserDao.update(existUser);
 
