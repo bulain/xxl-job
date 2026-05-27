@@ -61,5 +61,11 @@ public interface XxlJobInfoMapper {
 	 */
 	public int scheduleUpdate(XxlJobInfo xxlJobInfo);
 
+	public List<XxlJobInfo> findList(
+			@Param("jobGroup") int jobGroup,
+			@Param("triggerStatus") int triggerStatus,
+			@Param("jobDesc") String jobDesc,
+			@Param("executorHandler") String executorHandler,
+			@Param("author") String author);
 
 }
