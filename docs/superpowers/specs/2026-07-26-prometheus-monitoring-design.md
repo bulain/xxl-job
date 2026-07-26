@@ -41,11 +41,14 @@
 ```properties
 ### actuator
 management.server.port=18080
-management.server.base-path=/actuator
 management.endpoints.web.exposure.include=health,info,prometheus
 management.health.mail.enabled=false
 management.metrics.tags.application=xxl-job-admin
 ```
+
+注意：不设 `management.server.base-path`。独立管理端口下该属性同时成为子上下文
+context-path 和端点 base path，会产生 `/actuator/actuator` 双前缀（实测确认）。
+端点默认 base path 即 `/actuator`，URL 不变。
 
 效果：
 
@@ -53,7 +56,10 @@ management.metrics.tags.application=xxl-job-admin
 - 管理端口 18080，仅暴露 `health`、`info`、`prometheus` 三个端点。
 - 抓取地址：`http://<host>:18080/actuator/prometheus`。
 - 所有指标带 `application="xxl-job-admin"` 标签，多实例部署可区分。
-- 8080 端口访问 `/actuator/...` 返回 404，业务端口与管理端口隔离。
+- 8080 端口无 actuator 端点，访问对应路径被登录拦截器拦截（302），业务端口与管理端口隔离。
+- 管理子上下文会继承主上下文注册的拦截器（parent context 的 `WebMvcConfigurer` 对子上下文可见），
+  且路径排除在子上下文不生效。`PermissionInterceptor` 按 handler 类型放行：
+  bean 类名以 `org.springframework.boot.actuate` 开头直接通过。
 
 ### 3. 指标内容
 
