@@ -34,10 +34,17 @@ public class PermissionInterceptor implements AsyncHandlerInterceptor {
 			return true;	// proceed with the next interceptor
 		}
 
+		HandlerMethod method = (HandlerMethod)handler;
+
+		// actuator endpoints (exposed on the separate management port) are exempt from login,
+		// otherwise prometheus scraping gets redirected to the login page
+		if (method.getBeanType().getName().startsWith("org.springframework.boot.actuate")) {
+			return true;
+		}
+
 		// if need login
 		boolean needLogin = true;
 		boolean needAdminuser = false;
-		HandlerMethod method = (HandlerMethod)handler;
 		PermissionLimit permission = method.getMethodAnnotation(PermissionLimit.class);
 		if (permission!=null) {
 			needLogin = permission.limit();

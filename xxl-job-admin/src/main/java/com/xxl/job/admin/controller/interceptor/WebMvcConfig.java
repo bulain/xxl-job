@@ -21,10 +21,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // exclude actuator endpoints: on separate management port the child context
-        // inherits these interceptors, otherwise prometheus scraping gets redirected to login
-        registry.addInterceptor(permissionInterceptor).addPathPatterns("/**").excludePathPatterns("/actuator/**");
-        registry.addInterceptor(cookieInterceptor).addPathPatterns("/**").excludePathPatterns("/actuator/**");
+        registry.addInterceptor(permissionInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(cookieInterceptor).addPathPatterns("/**");
     }
 
 }
