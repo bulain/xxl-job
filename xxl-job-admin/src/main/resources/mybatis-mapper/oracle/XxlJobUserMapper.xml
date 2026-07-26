@@ -53,13 +53,18 @@
 		WHERE t.username = #{username}
 	</select>
 
-	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobUser" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobUser" >
+		<selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="id">
+			SELECT xxl_job_user_seq.NEXTVAL FROM DUAL
+		</selectKey>
 		INSERT INTO xxl_job_user (
+			id,
 			username,
 			password,
 			role,
 			permission
 		) VALUES (
+			#{id},
 			#{username},
 			#{password},
 			#{role},

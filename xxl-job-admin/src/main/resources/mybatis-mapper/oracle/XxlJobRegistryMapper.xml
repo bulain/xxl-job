@@ -47,8 +47,8 @@
 			AND t.registry_value = #{registryValue}
 		)
 		WHEN MATCHED THEN UPDATE SET update_time = #{updateTime}
-		WHEN NOT MATCHED THEN INSERT (registry_group, registry_key, registry_value, update_time)
-			VALUES (#{registryGroup}, #{registryKey}, #{registryValue}, #{updateTime})
+		WHEN NOT MATCHED THEN INSERT (id, registry_group, registry_key, registry_value, update_time)
+			VALUES (xxl_job_registry_seq.NEXTVAL, #{registryGroup}, #{registryKey}, #{registryValue}, #{updateTime})
 	</insert>
 
 	<!--

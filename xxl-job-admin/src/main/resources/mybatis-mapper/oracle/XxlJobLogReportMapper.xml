@@ -19,13 +19,18 @@
 		t.fail_count
 	</sql>
 	
-	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLogReport" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLogReport" >
+		<selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="id">
+			SELECT xxl_job_log_report_seq.NEXTVAL FROM DUAL
+		</selectKey>
 		INSERT INTO xxl_job_log_report (
+			id,
 			trigger_day,
 			running_count,
 			suc_count,
 			fail_count
 		) VALUES (
+			#{id},
 			#{triggerDay},
 			#{runningCount},
 			#{sucCount},

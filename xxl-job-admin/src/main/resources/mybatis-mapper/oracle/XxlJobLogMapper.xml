@@ -117,14 +117,19 @@
 	</select>
 
 	
-	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLog" useGeneratedKeys="true" keyProperty="id" >
+	<insert id="save" parameterType="com.xxl.job.admin.core.model.XxlJobLog" >
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="id">
+			SELECT xxl_job_log_seq.NEXTVAL FROM DUAL
+		</selectKey>
 		INSERT INTO xxl_job_log (
+			id,
 			job_group,
 			job_id,
 			trigger_time,
 			trigger_code,
 			handle_code
 		) VALUES (
+			#{id},
 			#{jobGroup},
 			#{jobId},
 			#{triggerTime},
