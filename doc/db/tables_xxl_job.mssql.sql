@@ -4,8 +4,6 @@
 -- SQL Server 2012+
 --
 
-CREATE DATABASE xxl_job;
-GO
 USE xxl_job;
 GO
 
