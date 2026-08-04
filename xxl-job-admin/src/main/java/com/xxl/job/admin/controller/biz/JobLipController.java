@@ -72,7 +72,7 @@ public class JobLipController {
                 if (appname == null || appname.trim().isEmpty()) {
                     return Response.ofFail("parameter 【appname】 error");
                 }
-                List<XxlJobGroup> list = xxlJobGroupMapper.findList(appname.trim(), null);
+                List<XxlJobGroup> list = xxlJobGroupMapper.findList(appname.trim());
                 Gson gson = new Gson();
                 String json = gson.toJson(list);
                 return Response.ofSuccess(json);
